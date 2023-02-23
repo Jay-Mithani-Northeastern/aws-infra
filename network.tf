@@ -1,7 +1,7 @@
 
 resource "aws_vpc" "vpc" {
-  cidr_block = var.vpc_cidr_block
-  instance_tenancy = "default"
+  cidr_block           = var.vpc_cidr_block
+  instance_tenancy     = "default"
   enable_dns_hostnames = true
   tags = {
     Name = "my-vpc"
@@ -73,3 +73,49 @@ resource "aws_route_table_association" "private_route_association" {
   subnet_id      = aws_subnet.private_subnet[count.index].id
   route_table_id = aws_route_table.private_route_table.id
 }
+
+
+resource "aws_instance" "demo" {
+  ami             = var.ami
+  key_name        = var.key_name
+  instance_type   = var.instance_type
+  subnet_id       = aws_subnet.public_subnet[0].id
+  security_groups = ["${aws_security_group.instance.id}"]
+  disable_api_termination     = false
+  associate_public_ip_address = true
+}
+
+resource "aws_security_group" "instance" {
+  name_prefix = "application-sg"
+  vpc_id      = aws_vpc.vpc.id
+
+  ingress {
+    from_port   = local.ingress_port[0]
+    to_port     = local.ingress_port[0]
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = local.ingress_port[1]
+    to_port     = local.ingress_port[1]
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = local.ingress_port[2]
+    to_port     = local.ingress_port[2]
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = local.ingress_port[3]
+    to_port     = local.ingress_port[3]
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+}
+
