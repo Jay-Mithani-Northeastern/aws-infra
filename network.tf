@@ -74,24 +74,35 @@ resource "aws_route_table_association" "private_route_association" {
   route_table_id = aws_route_table.private_route_table.id
 }
 
-
+resource "aws_iam_instance_profile" "profile" {
+  name = "ec2_profile"
+  role = aws_iam_role.ec2_csye6225_role.name
+}
 resource "aws_instance" "demo" {
-  ami             = var.ami
-  key_name        = var.key_name
-  instance_type   = var.instance_type
-  subnet_id       = aws_subnet.public_subnet[0].id
-  security_groups = ["${aws_security_group.instance.id}"]
+  ami                         = var.ami
+  key_name                    = var.key_name
+  instance_type               = var.instance_type
+  subnet_id                   = aws_subnet.public_subnet[0].id
+  security_groups             = ["${aws_security_group.instance.id}"]
   disable_api_termination     = false
   associate_public_ip_address = true
+  iam_instance_profile        = aws_iam_instance_profile.profile.name
   root_block_device {
     volume_type           = "gp2"
-    volume_size           = 50
+    volume_size           = var.root_blook_device_size
     delete_on_termination = true
   }
 
   tags = {
-    "Name" = "demo ec2"
+    "Name" = var.instance_name
   }
+
+  user_data = <<-EOF
+   #!/bin/bash
+      echo DATABASE_URL=${var.db_dialect}://${var.db_username}:${var.db_password}@${aws_db_instance.postgresql_instance.endpoint}/${var.db_name} >> /etc/environment
+      echo S3_BUCKET_NAME=${aws_s3_bucket.private.bucket} >> /etc/environment
+      systemctl restart webapp.service
+    EOF
 }
 
 resource "aws_security_group" "instance" {
@@ -123,6 +134,13 @@ resource "aws_security_group" "instance" {
     from_port   = local.ingress_port[3]
     to_port     = local.ingress_port[3]
     protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
