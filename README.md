@@ -21,18 +21,26 @@ Before running this Terraform code, you will need the following:
 4. Validate the configuration by running **terraform validate**.
    ```
    terraform validate
+   or
+   terraform validate -var-file="variables.tfvars"
    ```
 5. Preview the changes that will be made by running **terraform plan**.
    ```
    terraform plan
+   or
+   terraform plan -var-file="variables.tfvars"
    ```
 6. Apply the changes by running **terraform apply**.
    ```
    terraform apply
+   or
+   terraform apply -var-file="variables.tfvars"
    ```
 7. When you are finished, tear down the infrastructure by running **terraform destroy**.
 8. ```
    terraform destroy
+   or
+   terraform destroy -var-file="variables.tfvars"
    ```
 
 ## Resources
