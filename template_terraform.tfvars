@@ -40,3 +40,6 @@ instance_type = ""
 root_blook_device_size = 8
 instance_name = ""
 
+#DNS resources
+domain_name = ""
+
