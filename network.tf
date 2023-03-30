@@ -105,6 +105,12 @@ resource "aws_instance" "demo" {
     EOF
 }
 
+resource "aws_iam_role_policy_attachment" "cloudwatch_policy_attachment" {
+  policy_arn = data.aws_iam_policy.cloud_watch_access.arn
+  role       = aws_iam_role.ec2_csye6225_role.name
+}
+
+
 resource "aws_security_group" "instance" {
   name_prefix = "application-sg"
   vpc_id      = aws_vpc.vpc.id
