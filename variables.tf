@@ -113,3 +113,6 @@ variable "root_blook_device_size" {
 variable "domain_name" {
   type = string
 }
+data "aws_iam_policy" "cloud_watch_access" {
+  name = "CloudWatchAgentServerPolicy"
+}
