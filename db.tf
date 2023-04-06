@@ -1,4 +1,3 @@
-
 resource "aws_db_instance" "postgresql_instance" {
   identifier             = var.db_identifier
   engine                 = var.db_engine
@@ -29,9 +28,9 @@ resource "aws_security_group" "database_security_group" {
   name_prefix = "database-sg"
   vpc_id      = aws_vpc.vpc.id
   ingress {
-    from_port = 5432
-    to_port   = 5432
-    protocol  = "tcp"
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
     security_groups = [aws_security_group.instance.id]
   }
 

@@ -107,7 +107,7 @@ variable "instance_name" {
 }
 
 variable "root_blook_device_size" {
-  type =number
+  type = number
 }
 
 variable "domain_name" {
