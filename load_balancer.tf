@@ -14,6 +14,9 @@ resource "aws_lb_target_group" "loadbalancer_targetgroup" {
   port     = 5000
   protocol = "HTTP"
   vpc_id   = aws_vpc.vpc.id
+  health_check {
+    path = "/healthz"
+  }
 }
 
 resource "aws_lb_listener" "front_end" {

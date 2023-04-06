@@ -20,28 +20,49 @@ resource "aws_autoscaling_group" "auto_scaling" {
 
 }
 
-resource "aws_autoscaling_policy" "scale_up_policy" {
-  name                   = "scale-up-policy"
-  autoscaling_group_name = aws_autoscaling_group.auto_scaling.name
+resource "aws_autoscaling_policy" "scaleIn_policy" {
+  name                   = "scale-in"
+  scaling_adjustment     = 1
   adjustment_type        = "ChangeInCapacity"
-  policy_type            = "TargetTrackingScaling"
-  target_tracking_configuration {
-    predefined_metric_specification {
-      predefined_metric_type = "ASGAverageCPUUtilization"
-    }
-    target_value = 5.0
-  }
+  cooldown               = 60
+  autoscaling_group_name = aws_autoscaling_group.auto_scaling.name
 }
 
-resource "aws_autoscaling_policy" "scale_down_policy" {
-  name                   = "scale-down-policy"
-  autoscaling_group_name = aws_autoscaling_group.auto_scaling.name
-  adjustment_type        = "ChangeInCapacity"
-  policy_type            = "TargetTrackingScaling"
-  target_tracking_configuration {
-    predefined_metric_specification {
-      predefined_metric_type = "ASGAverageCPUUtilization"
-    }
-    target_value = 3.0
+resource "aws_cloudwatch_metric_alarm" "scaleIn_alarm" {
+  alarm_name          = "scale-in"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = 2
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/EC2"
+  period              = 60
+  statistic           = "Average"
+  threshold           = 5
+  dimensions = {
+    AutoScalingGroupName = aws_autoscaling_group.auto_scaling.name
   }
+  alarm_description = "This metric monitors ec2 cpu utilization"
+  alarm_actions     = [aws_autoscaling_policy.scaleIn_policy.arn]
+}
+resource "aws_autoscaling_policy" "scaleDown_policy" {
+  name                   = "scale-down"
+  scaling_adjustment     = -1
+  adjustment_type        = "ChangeInCapacity"
+  cooldown               = 60
+  autoscaling_group_name = aws_autoscaling_group.auto_scaling.name
+}
+
+resource "aws_cloudwatch_metric_alarm" "scaleDown_alarm" {
+  alarm_name          = "scale-down"
+  comparison_operator = "LessThanOrEqualToThreshold"
+  evaluation_periods  = 2
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/EC2"
+  period              = 60
+  statistic           = "Average"
+  threshold           = 3
+  dimensions = {
+    AutoScalingGroupName = aws_autoscaling_group.auto_scaling.name
+  }
+  alarm_description = "This metric monitors ec2 cpu utilization"
+  alarm_actions     = [aws_autoscaling_policy.scaleDown_policy.arn]
 }
