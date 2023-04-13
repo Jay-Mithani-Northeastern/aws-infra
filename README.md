@@ -9,6 +9,7 @@ Before running this Terraform code, you will need the following:
 1. AWS account
 2. Terraform installed on your local machine
 3. AWS CLI installed on your local machine
+4. Rename the "template_terraform.tfvars" to "terraform.tfvars" and provide appropriate values
 
 ## Usage
 
@@ -27,20 +28,14 @@ Before running this Terraform code, you will need the following:
 5. Preview the changes that will be made by running **terraform plan**.
    ```
    terraform plan
-   or
-   terraform plan -var-file="variables.tfvars"
    ```
 6. Apply the changes by running **terraform apply**.
    ```
    terraform apply
-   or
-   terraform apply -var-file="variables.tfvars"
    ```
 7. When you are finished, tear down the infrastructure by running **terraform destroy**.
-8. ```
+   ```
    terraform destroy
-   or
-   terraform destroy -var-file="variables.tfvars"
    ```
 
 ## Resources
@@ -52,3 +47,15 @@ This Terraform code creates the following resources:
 3. Internet Gateway
 4. Route Tables
 5. Route Table Associations
+6. Launch Template 
+7. Auto Scaling Group
+8. Load Balancer
+9. Target Group
+10. RDS instance
+11. Route53 record
+12. S3 Bucket
+
+## Command to import certificate
+   ```
+   aws acm import-certificate --profile demo --certificate fileb://demo_jaymithani_me.crt --private-key fileb://jaymithani.key
+   ```
