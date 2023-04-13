@@ -12,6 +12,8 @@ resource "aws_db_instance" "postgresql_instance" {
   publicly_accessible    = false
   skip_final_snapshot    = true
   vpc_security_group_ids = [aws_security_group.database_security_group.id]
+  storage_encrypted      = true
+  kms_key_id             = aws_kms_key.kms_rds.arn
 }
 resource "aws_db_parameter_group" "postgresql_parameters" {
   name        = var.db_pg_name
@@ -34,4 +36,11 @@ resource "aws_security_group" "database_security_group" {
     security_groups = [aws_security_group.instance.id]
   }
 
+}
+
+resource "aws_kms_key" "kms_rds" {
+  description             = "KMS key for RDS"
+  policy                  = local.policy_kms_json
+  enable_key_rotation     = true
+  deletion_window_in_days = 7
 }

@@ -3,6 +3,16 @@ resource "aws_launch_template" "launch_template" {
   instance_type = var.instance_type
   image_id      = var.ami
   key_name      = var.key_name
+  block_device_mappings {
+    device_name = "/dev/xvda"
+    ebs {
+      volume_size           = 8
+      encrypted             = true
+      kms_key_id            = aws_kms_key.kms_ebs.arn
+      delete_on_termination = true
+    }
+  }
+
   network_interfaces {
     security_groups             = [aws_security_group.instance.id]
     associate_public_ip_address = true
@@ -24,3 +34,16 @@ resource "aws_launch_template" "launch_template" {
     }
   }
 }
+
+resource "aws_kms_key" "kms_ebs" {
+  description             = "KMS key for EBS"
+  policy                  = local.policy_kms_json
+  enable_key_rotation     = true
+  deletion_window_in_days = 7
+}
+
+resource "aws_ebs_default_kms_key" "ebs_default_kms" {
+  key_arn    = aws_kms_key.kms_ebs.arn
+  depends_on = [aws_kms_key.kms_ebs]
+}
+

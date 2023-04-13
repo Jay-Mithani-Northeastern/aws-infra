@@ -91,6 +91,7 @@ resource "aws_security_group" "instance" {
     to_port     = local.ingress_port[0]
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    # security_groups = [aws_security_group.loadbalancer_securitygroup.id]
   }
   ingress {
     from_port       = local.ingress_port[1]
