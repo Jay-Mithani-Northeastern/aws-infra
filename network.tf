@@ -87,15 +87,8 @@ resource "aws_security_group" "instance" {
   name_prefix = "application-sg"
   vpc_id      = aws_vpc.vpc.id
   ingress {
-    from_port   = local.ingress_port[0]
-    to_port     = local.ingress_port[0]
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    # security_groups = [aws_security_group.loadbalancer_securitygroup.id]
-  }
-  ingress {
-    from_port       = local.ingress_port[1]
-    to_port         = local.ingress_port[1]
+    from_port       = local.ingress_port[0]
+    to_port         = local.ingress_port[0]
     protocol        = "tcp"
     security_groups = [aws_security_group.loadbalancer_securitygroup.id]
   }

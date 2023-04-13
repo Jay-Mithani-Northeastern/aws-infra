@@ -194,6 +194,16 @@ variable "root_blook_device_size" {
 variable "domain_name" {
   type = string
 }
+variable "port_HTTPS" {
+  type    = string
+  default = "443"
+}
+
+variable "port_application" {
+  type    = string
+  default = "5000"
+}
+
 data "aws_iam_policy" "cloud_watch_access" {
   name = "CloudWatchAgentServerPolicy"
 }
